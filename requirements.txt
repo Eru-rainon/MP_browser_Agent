@@ -1,0 +1,13 @@
+langchain
+langchain-openai
+langchain-chroma
+langchain-core
+langgraph
+playwright
+selenium
+beautifulsoup4
+lxml
+python-dotenv
+PyPDF2
+typing_extensions
+chromadb
