@@ -55,7 +55,7 @@ class DomEmbedder:
         """Creates a natural language description of a DOM element."""
         desc = [f"Element: {tag.tag}"]
         
-        # attributes
+ 
         common_attrs = ["type", "placeholder", "aria-label", "name", "role", "id", "class", "href", "title", "value", "alt"]
         attributes = []
         for attr in common_attrs:
@@ -66,7 +66,7 @@ class DomEmbedder:
         if attributes:
             desc.append("Attributes: " + "| ".join(attributes))
             
-        # Text content
+ 
         text = tag.text_content().strip()
         if text:
             trimmed = text[:100] + "..." if len(text) > 100 else text
@@ -147,9 +147,6 @@ class XPathGenerator:
         return response.content.strip()
 
 
-# ==========================================
-# 3. MAIN SHOWCASE LOOP
-# ==========================================
 
 def run_showcase():
     # Initialize Models
@@ -160,11 +157,11 @@ def run_showcase():
     generator = XPathGenerator(llm)
 
     with sync_playwright() as p:
-        # Browser Setup
+     
         browser = p.chromium.launch(headless=False) 
         page = browser.new_page()
 
-        # User Input: URL
+       
         url = input("\n Enter the URL to analyze: ").strip()
         if not url.startswith("http"):
             url = "https://" + url
@@ -177,7 +174,7 @@ def run_showcase():
             print(f"Error loading page: {e}")
             return
 
-        # Embed the Website
+        
         embedder.process_and_embed(page)
 
         while True:
@@ -187,25 +184,16 @@ def run_showcase():
 
             xpath = generator.find_xpath(embedder, user_prompt)
             
-            # --- CRITICAL FIX: Add missing slash if LLM forgot it ---
+          
             if not xpath.startswith("/") and not xpath.startswith("("):
                 xpath = "/" + xpath
-            # --------------------------------------------------------
+           
 
             print(f" Trying XPath: {xpath}")
 
             try:
-                # We use .first to just get the top match
+               
                 locator = page.locator(f"xpath={xpath}").first
-                
-                # Check if Playwright actually sees it
-                if locator.count() > 0:
-                    print(" Element found! Highlighting for 3 seconds...")
-                    locator.scroll_into_view_if_needed() # Scroll to it first
-                    locator.highlight()
-                    page.wait_for_timeout(3000) # Pause so you can see it
-                else:
-                    print(" XPath was valid, but element not found on current page state.")
             except Exception as e:
                 print(f" Playwright Error: {e}")
 
