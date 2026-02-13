@@ -12,16 +12,15 @@ from Tools.playwrightTools import PlaywrightTools
 
 
 
+#this is the agent description
 
 class WikiAgent:
     def __init__(self,page,llm,embeddingsModel):
         self.llm = llm
         self.embedder = Embedder(self.llm,embeddingsModel)
-        self.textExtractor = textExtractor(self.embedder)
         self.agentExecutor = None
         self.page = page
         self.playwrightTools = PlaywrightTools(self.page)
-        self.jsonTools = JsonTools()
         self.tools = self.buildTools()
         self.initialUrl = None 
 
