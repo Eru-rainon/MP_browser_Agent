@@ -1,12 +1,9 @@
 
 from langchain.agents import initialize_agent,AgentType
 from langchain.callbacks import get_openai_callback
-import json
 from langchain_core.tools import Tool
 from NavigatorHead.embedder import Embedder
 from Tools.playwrightTools import PlaywrightTools
-from Tools.jsonTools import JsonTools
-from NavigatorHead.textExtractor import textExtractor
 
 
 
@@ -77,53 +74,7 @@ class WikiAgent:
                         name="press_enter_key",
                         func=lambda _:self.pressEnterKey(),
                         description="use this tool to press the enter key"
-                    ),
-                Tool(
-                        name="get_text_from_website",
-                        func=lambda _:self.getTextFromWebsite(),
-                        description="use this tool to extract text data from the current webpage. no input required"
-                    ),
-                Tool(
-                    name = "load_from_json",
-                    func=lambda filename: self.loadDataFromJson(filename),
-                    description="use this tool to load data from a json file. input should be the filename as a string"
-                    
-                ),
-
-                Tool(
-                    name = "load_previous_flow",
-                    func = lambda url : self.loadContext(url),
-                    description=(
-                        "Checks for saved workflows associated with the given URL. "
-                        "If found and relevant, use the steps to complete the current task. Input must be the current website's URL."
                     )
-                    
-                ),
-                Tool(
-                    name = "load_previous_xpaths",
-                    func = lambda url : self.loadXpaths(url),
-                    description="use this tool to check if there are any existing Xpaths for the current url. if Xpaths are obtained, try completing the goal using those Xpaths first. Input must be the current website's URL"
-                ),
-                Tool(
-                    name = "save_flow_to_json",
-                    func = lambda steps:self.saveFlowtoJson(steps),
-                    description="use this to save the current workflow to a json for future reference. input should be a string containing steps that was followed in the current session."
-                ),
-                Tool(
-                    name="save_Xpaths_to_json",
-                    func=lambda xpaths:self.saveXPathstoJson(xpaths),
-                    description="use this after a task to save the xpaths that were used in this flow. input should a string in the format 'element':'xpath'"
-                ),
-                Tool(
-                    name="take_screenshot",
-                    func=lambda _:self.playwrightTools.getScreenShot(),
-                    description="use this tool to take a screenshot. No input required"
-                ),
-                Tool(
-                    name="save_screenshots",
-                    func=lambda _:self.playwrightTools.merge_snapshots(),
-                    description="use this tool to save all screenshots. No input required"
-                )
 
              
                 
@@ -159,15 +110,6 @@ class WikiAgent:
         self.embedder.needsReEmbedding = True
         return self.playwrightTools.clickButton(Xpath)
 
-    def downloadFile(self,Xpath):
-        self.embedder.needsReEmbedding = True
-        return self.playwrightTools.clickAndDownload(Xpath)
-        
-
-    def scrollWebpage(self,xpath):
-        return self.playwrightTools.scrollBrowser(xpath)
-        
-
     def browserBack(self):
         self.playwrightTools.browserBack()
         self.embedder.needsReEmbedding = True
@@ -182,93 +124,6 @@ class WikiAgent:
         self.playwrightTools.pressEnterKey()
         self.embedder.needsReEmbedding = True
         return "Entered successfully"
-
-    def getTextFromWebsite(self):
-        html = self.playwrightTools.getPageSource()
-        text = self.textExtractor.getTextData(html)
-        if text:
-            return "text data extracted from webpage successfully"
-        return "unable to extract text data from webpage, try again after reloading the page"
-
-
-        #flow logging
-
-
-    def loadContext(self,url):
-        workflow = "no workflow currently loaded"
-        with open("flow.json","r") as flow:
-            data = json.load(flow)
-            for entry in data:
-                if entry["url"] == url:
-                    workflow = entry["steps"]
-                    break
-        return workflow
-
-    def loadXpaths(self,url):
-        workflow = "no XPATHS currently loaded"
-        with open("Xpaths.json","r") as flow:
-            data = json.load(flow)
-            for entry in data:
-                if entry["url"] == url:
-                    workflow = entry["Xpaths"]
-                    break
-        return workflow
-
-    def loadDataFromJson(self,filepath):
-        return self.jsonTools.loadCredentials(filepath)
-
-    def storeDatatoJson(self,data):
-        return self.jsonTools.storetoJson(data)
-
-    def saveFlowtoJson(self,steps):
-        flowData = []
-
-        try:
-            with open("flow.json", 'r') as flow:
-                flowData = json.load(flow)
-        except FileNotFoundError:
-            flowData = []
-
-  
-        flowData = [entry for entry in flowData if entry["url"] != self.initialUrl]
-
-
-        flowData.append({
-            "url": self.initialUrl,
-            "steps":steps
-        })
-
-        with open("flow.json", 'w') as flow:
-            json.dump(flowData, flow, indent=2)
-
-        return f"Flow saved successfully for URL: {self.initialUrl}"
-
-
-    def saveXPathstoJson(self,Xpaths):
-        flowData = []
-
-        try:
-            with open("Xpaths.json", 'r') as flow:
-                flowData = json.load(flow)
-        except FileNotFoundError:
-            flowData = []
-
-  
-        flowData = [entry for entry in flowData if entry["url"] != self.initialUrl]
-
-
-        flowData.append({
-            "url": self.initialUrl,
-            "Xpaths":Xpaths
-        })
-
-        with open("Xpaths.json", 'w') as flow:
-            json.dump(flowData, flow, indent=2)
-
-        return f"Xpaths saved successfully for URL: {self.initialUrl}"
-
-
-
 
       #====================================TOOLS USED BY AGENT=========================================================
 

@@ -19,7 +19,7 @@ class Generator:
         self.domPrompt = ChatPromptTemplate.from_template(
         """
              you are an expert web developer. based on the context return **only** the XPATH of the web element which can be used to achieve the goal.
-             Selenium should be able to directly access that element using the XPATH provided as result.
+             playwright should be able to directly access that element using the XPATH provided as result.
              find the element that matches the most with the query and return only the xpath provided with it.
              Do NOT include any explanation, code formatting, markdown backticks, or comments.
 
