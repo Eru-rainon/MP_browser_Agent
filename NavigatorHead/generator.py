@@ -21,13 +21,14 @@ class Generator:
              you are an expert web developer. based on the context return **only** the XPATH of the web element which can be used to achieve the goal.
              playwright should be able to directly access that element using the XPATH provided as result.
              find the element that matches the most with the query and return only the xpath provided with it.
+             do not modify the xpath or invent new xpaths.
              Do NOT include any explanation, code formatting, markdown backticks, or comments.
 
              Respond with ONLY the raw XPath that was provided with the element description as plain text.
 
              Context : {context}
              Goal : {question}
-             XPATH:  
+             RAW XPATH:
         """
         )
 

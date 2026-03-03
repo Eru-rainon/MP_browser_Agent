@@ -36,9 +36,9 @@ class WikiAgent:
                         name = "get_XPATH",
                         func=lambda goal: self.getXPath(goal),
                         description=(
-                            "Use this tool to interact with a webpage and find the XPath of an element most suited for the current step. "
-                            "goal should be of the format 'find the XPATH of the 'required element' "
-                            "do **not** use this tool to extract text data or find information about a webpage"
+                            "Use this tool to find the XPath of an element to interact with. "
+                            "CRITICAL: When searching, focus on the visible text or purpose (e.g., 'Add to shopping Cart') "
+                            "Web elements are often unpredictable (e.g., a button might be an <input> or <a> tag)."
                         )
                     ),
                 Tool(

@@ -6,7 +6,8 @@ class PlaywrightTools:
         self.snapshots = []
 
     def goToUrl(self,url):                                                                                                          
-        self.page.goto(url,wait_until = "networkidle")                                                                                     
+        self.page.goto(url, wait_until="domcontentloaded")  
+        self.page.wait_for_timeout(2500)                                                                        
                                                                                                                                     
     def AccessElement(self, selector):                                                                                             
         return self.page.locator(f"xpath={selector.strip()}").first                                                                                    

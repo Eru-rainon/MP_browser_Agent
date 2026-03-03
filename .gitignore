@@ -210,3 +210,5 @@ __marimo__/
 
 venv/
 chromadb_showcase/
+chromadb_dom/
+

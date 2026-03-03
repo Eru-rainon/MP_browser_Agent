@@ -41,12 +41,15 @@ with sync_playwright() as p:
     """)
 
     page = context.new_page()
-
-
-    newprompt = input("enter the prompt")
     newAgent = WikiAgent(page=page, llm=navigationLlm, embeddingsModel=EmbeddingsModel)
 
+    with open("prompt.txt", "r") as file:
+        newprompt = file.read()
+
+    
+
     newAgent.chat(newprompt)
+    input("Agent finished execution. Press Enter to close the browser...")
     
 
 
